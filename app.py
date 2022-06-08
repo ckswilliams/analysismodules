@@ -26,6 +26,7 @@ logger = logging.getLogger(__name__)  # the __name__ resolve to "main" since we 
 
 
 class Task(BaseModel):
+    study_instance_uid: str
     series_instance_uid_list: List[str]
     task_name: str
     accession_number: Optional[str] = None
@@ -34,6 +35,7 @@ class Task(BaseModel):
 
 
 class Result(BaseModel):
+    study_instance_uid: str
     series_instance_uid: str
     task_name: str
     status: str # Status should be returned as: processing or complete
@@ -76,7 +78,7 @@ class CustomJSONizer(json.JSONEncoder):
     
 def run_task(task) -> bool:
     """
-sadss
+    sadss
 
     """
     logger.debug('Running task')
@@ -88,6 +90,14 @@ sadss
     print('got fnc')
     try:
         im, d, meta = thanks.retrieve_series(task.series_instance_uid_list[0])
+    except ValueError:
+        tt = thanks.Thank('series',StudyInstanceUID = task.study_instance_uid, SeriesInstanceUID=task.series_instance_uid_list[0])
+        tt.move()
+        im, d, meta = thanks.retrieve_series(task.series_instance_uid_list[0])
+    except Exception as e:
+        return {'error': str(e)}
+        
+    try:
         #logger.debug('Analysing series key %s Running task %s', task)
         result = fnc(im=im, d=d)
     except Exception as e:
@@ -98,5 +108,5 @@ sadss
 
 
 
-tests = {'ctiq':run_ctiq_functions,
+tests = {'CTBrainQuality':run_ctiq_functions,
          'EyeLens':evaluate_lens_sparing}
