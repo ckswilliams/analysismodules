@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)  # the __name__ resolve to "main" since we 
 
 
 class Task(BaseModel):
-    study_instance_uid: str
+    study_instance_uid_list: List[str]
     series_instance_uid_list: List[str]
     task_name: str
     accession_number: Optional[str] = None
@@ -59,7 +59,8 @@ async def run_task(task: Task):
     logger.debug(task)
     result_data = run_task(task)
 
-    result = Result(series_instance_uid = task.series_instance_uid_list[0],
+    result = Result(study_instance_uid = task.study_instance_uid_list[0],
+                    series_instance_uid = task.series_instance_uid_list[0],
                     status = 'complete',
                     task_name = task.task_name,
                     json_data = json.dumps(result_data, cls=CustomJSONizer))
