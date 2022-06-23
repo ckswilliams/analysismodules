@@ -1,6 +1,9 @@
 from fastapi import FastAPI
 from typing import Optional, List
 
+import dotenv
+dotenv.load_dotenv()
+
 from pydantic import BaseModel
 import numpy as np
 import pydicom
@@ -19,6 +22,7 @@ logging.config.fileConfig('logging.conf', disable_existing_loggers=False)
 # get root logger
 logger = logging.getLogger(__name__)  # the __name__ resolve to "main" since we are at the root of the project. 
                                       # This will get the root logger since no logger in the configuration has this name.
+logger.setLevel(logging.DEBUG)
 
 
 #thanks.pi.MY.set_from_saved('IMGTLBX01')
@@ -51,6 +55,7 @@ app = FastAPI()
 
 @app.get("/")
 async def root():
+    logger.debug("Hello world requested")
     return {"message": "Hello World"}
 
 @app.post("/")
@@ -90,12 +95,20 @@ def run_task(task) -> bool:
     fnc = tests[task.task_name]
     print('got fnc')
     try:
+        logger.debug("Trying to retrieve series")
+        
         im, d, meta = thanks.retrieve_series(task.series_instance_uid_list[0])
     except ValueError:
-        tt = thanks.Thank('series',StudyInstanceUID = task.study_instance_uid, SeriesInstanceUID=task.series_instance_uid_list[0])
+        logger.debug("Failed to retrieve series, trying to move series to local Orthanc")
+        logger.debug('Study UID: %s, Series UID: %s', task.study_instance_uid_list[0], task.series_instance_uid_list[0])
+        tt = thanks.Thank('series',StudyInstanceUID = task.study_instance_uid_list[0], SeriesInstanceUID=task.series_instance_uid_list[0])
         tt.move()
+        logger.debug("Move attempt complete")
         im, d, meta = thanks.retrieve_series(task.series_instance_uid_list[0])
+        logger.debug("Successfully retrieved series")
     except Exception as e:
+        logger.info("Processing failed for %s", task)
+        logger.debug(str(e))
         return {'error': str(e)}
         
     try:
