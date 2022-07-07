@@ -157,8 +157,8 @@ tests = {#'save2dImage':save_2d_image,
         'AssessCentrality':assess_centrality,
         'testAngleCriteria':test_angle_criteria,
         'evaluateLensSparing':evaluate_lens_sparing,
-        'clinicalDetectibility':clinical_detectibility_wrapper,
-        'test':lambda x: {'test':'test'}}
+        'clinicalDetectibility':clinical_detectibility_wrapper
+        }
     
 
 def run_ctiq_functions(im, d):
