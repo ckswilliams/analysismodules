@@ -2,7 +2,7 @@ from medphunc.image_analysis import image_utility as iu
 from medphunc.image_analysis import clinical_mtf, segment_noise, clinical_nps
 from medphunc.image_analysis import detectibility
 
-from .eyeballer import is_lens_in_image, make_prediction
+from eyeballer import is_lens_in_image, make_prediction
 
 import pandas as pd
 import pydicom
@@ -109,32 +109,32 @@ def evaluate_lens_sparing(im: np.array, d: pydicom.Dataset) -> dict:
 
 
 
-def save_2d_image(im: np.array, d: pydicom.Dataset) -> dict:
-    # Save the image info stuff
+# def save_2d_image(im: np.array, d: pydicom.Dataset) -> dict:
+#     # Save the image info stuff
     
-    save_fn = f'assessment_images/brain_{d.SOPInstanceUID}.png'
-    save_check_fn = f'assessment_images/brain_{d.SOPInstanceUID}_checkimage.png'
-    output = {}
+#     save_fn = f'assessment_images/brain_{d.SOPInstanceUID}.png'
+#     save_check_fn = f'assessment_images/brain_{d.SOPInstanceUID}_checkimage.png'
+#     output = {}
 
-    try:
-        nn = segment_noise.HeadNoise(im)
-    except ValueError as e:
-        logger.debug('skipping %s because error during segmentation', str(e))
-        return output
+#     try:
+#         nn = segment_noise.HeadNoise(im)
+#     except ValueError as e:
+#         logger.debug('skipping %s because error during segmentation', str(e))
+#         return output
     
-    z_export = locate_calcifications(im, nn.data['brain']['mask'])
+#     z_export = locate_calcifications(im, nn.data['brain']['mask'])
     
-    if z_export > 0:
-        logger.debug(f'z level of {z_export} apepars to be ideal position. Exporting')
-        save_check_image(im, z_export, save_check_fn)
-        out = iu.apply_window(im[z_export,], 'brain',  unit_range=False)
-        imageio.imwrite(save_fn, out)
-        output['calcification_image_fn'] = save_fn
-        output['calcification_image_check_fn'] = save_check_fn
-    else:
-        logger.debug('skipping image because empty segmentation mask')
-        return output
-    return output
+#     if z_export > 0:
+#         logger.debug(f'z level of {z_export} apepars to be ideal position. Exporting')
+#         save_check_image(im, z_export, save_check_fn)
+#         out = iu.apply_window(im[z_export,], 'brain',  unit_range=False)
+#         imageio.imwrite(save_fn, out)
+#         output['calcification_image_fn'] = save_fn
+#         output['calcification_image_check_fn'] = save_check_fn
+#     else:
+#         logger.debug('skipping image because empty segmentation mask')
+#         return output
+#     return output
 
 def clinical_detectibility_wrapper(im: np.array, d: pydicom.Dataset) -> dict:
     
@@ -156,7 +156,6 @@ tests = {#'save2dImage':save_2d_image,
         'HeadNoise':head_noise_wrapper,
         'AssessCentrality':assess_centrality,
         'testAngleCriteria':test_angle_criteria,
-        'evaluateLensSparing':evaluate_lens_sparing,
         'clinicalDetectibility':clinical_detectibility_wrapper
         }
     
