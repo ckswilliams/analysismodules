@@ -1,12 +1,15 @@
 
 
-from medphunc.image_analysis import water_equivalent_diameter
+from medphunc.image_analysis.water_equivalent_diameter import WED
 import numpy as np
 import pydicom
 
 
 def wed(im: np.array, d: pydicom.Dataset) -> dict:
     
-    result = water_equivalent_diameter.wed_from_image(im, [*d.PixelSpacing, d.SliceThickness])
+    wed = WED.from_volume(im, d, method='full')
+    wed.wed_results['ssde'] = wed.ssde.iloc[0]
     
-    return {'water_equiv_circle_diam':result['water_equiv_circle_diam']}
+    return wed.wed_results
+
+
