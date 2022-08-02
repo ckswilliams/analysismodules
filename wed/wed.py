@@ -7,6 +7,6 @@ import pydicom
 
 def wed(im: np.array, d: pydicom.Dataset) -> dict:
     
-    result = water_equivalent_diameter.wed_from_image(im, [*d.PixelScale, d.SliceThickness])
+    result = water_equivalent_diameter.wed_from_image(im, [*d.PixelSpacing, d.SliceThickness])
     
     return {'water_equiv_circle_diam':result['water_equiv_circle_diam']}
