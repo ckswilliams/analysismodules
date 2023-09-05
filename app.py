@@ -13,6 +13,7 @@ import json
 from medphunc.pacs import thanks
 from medphunc.image_io import ct
 from wed.wed import wed
+from infant_dx.main import infant_dx_iq
 
 from ct_brain_iq.main import run_ctiq_functions, evaluate_lens_sparing, assess_centrality
 
@@ -126,4 +127,5 @@ def run_task(task) -> bool:
 tests = {'CTBrainQuality':run_ctiq_functions,
          'EyeLens':evaluate_lens_sparing,
          'Isocenter':assess_centrality,
-         'WED':wed}
+         'WED':wed,
+         'Infant CXR IQ':infant_dx_iq}
