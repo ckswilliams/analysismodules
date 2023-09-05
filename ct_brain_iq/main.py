@@ -2,7 +2,7 @@ from medphunc.image_analysis import image_utility as iu
 from medphunc.image_analysis import clinical_mtf, segment_noise, clinical_nps
 from medphunc.image_analysis import detectibility
 
-from eyeballer import is_lens_in_image, make_prediction
+from .eyeballer import is_lens_in_image, make_prediction
 
 import pandas as pd
 import pydicom
